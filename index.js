@@ -4,6 +4,8 @@ require("dotenv").config();
 
 const app = express();
 
+app.use(cors());
+
 const nlpcloudToken = process.env.NLPCLOUD_KEY;
 const nlpCloudClient = new NLPCloudClient("fast-gpt-j", nlpcloudToken, false);
 
@@ -19,18 +21,12 @@ let history = [
 ];
 let msg = "Hi";
 
-// const result = nlpCloudClient
-//   .chatbot(msg, history)
-//   .then((res) => {
-//     console.log("Res: " + res);
-//   })
-//   .catch((e) => {
-//     console.log("E: " + e);
-//   });
+app.get("/", function (req, res) {
+  res.send("hello");
+});
 
-app.get("/", async function (req, res) {
+app.get("/chat", async function (req, res) {
   try {
-    //res.send([{ d: "dd" }]);
     const response = await nlpCloudClient.chatbot(
       "I just broke up with my girlfriend... What is your name by the way?",
       "This is a discussion between a human and an AI. The human is sad but the AI is empathetic and reassuring. The AI is called Patrick.",
@@ -38,8 +34,6 @@ app.get("/", async function (req, res) {
     );
     res.send(response.data);
     console.log("response: " + response.data);
-    // Send response to Discord bot.
-    //message.reply(`${response.data['response']}`);
   } catch (e) {
     console.log("E: " + e);
   }
